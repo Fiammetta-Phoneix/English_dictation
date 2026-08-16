@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>拼写听写练习</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="ghost" id="backBtn" aria-label="上一题">← 上一题</button>
+      <div class="progress-wrap">
+        <span id="progressText">1 / 3</span>
+        <div class="progress"><i id="progressBar"></i></div>
+      </div>
+      <button class="ghost" id="finishBtn">结束练习</button>
+    </header>
+
+    <section class="toolbar" aria-label="练习设置">
+      <button id="importBtn" class="tool-button import-button">＋ 导入真人音频</button>
+      <label>中文大小
+        <input id="fontSize" type="range" min="22" max="46" value="32" />
+      </label>
+      <button id="replayBtn" class="tool-button">↻ 重听 <kbd>~</kbd></button>
+      <button id="peekBtn" class="tool-button">👀 偷看 <kbd>Tab</kbd></button>
+    </section>
+
+    <section class="practice-card">
+      <p class="hint" id="hintText"></p>
+      <div class="sentence-actions">
+        <button class="listen-button" id="listenBtn" aria-label="播放句子">
+          <span class="speaker">🔊</span>
+          <span>播放句子</span>
+        </button>
+        <button class="favorite-button" id="favoriteBtn" aria-label="收藏当前例句">☆ 收藏例句</button>
+      </div>
+
+      <div class="answer-area" id="answerArea" aria-label="逐词拼写区"></div>
+
+      <p class="feedback" id="feedback" aria-live="polite">听音频，然后逐词输入；按空格切换到下一个词。</p>
+      <button class="primary" id="nextBtn">检查答案</button>
+    </section>
+
+    <footer>
+      <span>答对 <strong id="correctCount">0</strong></span>
+      <span>重听 <strong id="replayCount">0</strong> 次</span>
+      <span id="statusText">练习中</span>
+    </footer>
+  </main>
+
+  <dialog id="importDialog" class="import-dialog">
+    <form method="dialog" class="import-panel" id="importForm">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">本地音频导入</span>
+          <h2>用真人录音生成听写题</h2>
+        </div>
+        <button class="close-button" value="cancel" aria-label="关闭">×</button>
+      </div>
+
+      <div class="import-step">
+        <span class="step-number">1</span>
+        <div class="step-content">
+          <label class="field-label" for="audioFile">选择 MP3 或其他音频文件</label>
+          <label class="file-picker">
+            <input id="audioFile" type="file" accept="audio/*,.mp3,.m4a,.wav,.ogg" />
+            <span>选择音频</span>
+            <strong id="audioFileName">尚未选择文件</strong>
+          </label>
+          <div class="saved-transcript" id="savedTranscriptPanel" hidden>
+            <div>
+              <strong>发现这个文件以前保存的时间稿</strong>
+              <span id="savedTranscriptMeta"></span>
+            </div>
+            <button class="saved-import-button" id="loadSavedTranscriptBtn" type="button">导入已保存时间稿</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="import-step">
+        <span class="step-number">2</span>
+        <div class="step-content">
+          <div class="transcribe-row">
+            <div>
+              <span class="field-label">自动识别英文</span>
+              <span class="model-note">首次识别会下载模型，之后可离线使用</span>
+            </div>
+            <div class="recognition-options">
+              <label class="model-picker">识别精度
+                <select id="modelSelect">
+                  <option value="tiny.en">快速</option>
+                  <option value="base.en" selected>均衡</option>
+                  <option value="small.en">较准确</option>
+                </select>
+              </label>
+              <label class="model-picker">生成范围
+                <select id="selectionCount">
+                  <option value="0">全部脚本</option>
+                  <option value="10" selected>精选 10 条</option>
+                  <option value="20">精选 20 条</option>
+                  <option value="30">精选 30 条</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <button class="transcribe-button" id="transcribeBtn" type="button" disabled>
+            <span id="transcribeIcon">✦</span>
+            <span id="transcribeButtonText">自动识别并生成时间稿</span>
+          </button>
+          <div class="transcribe-status" id="transcribeStatus" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="import-step">
+        <span class="step-number">3</span>
+        <div class="step-content">
+          <label class="field-label" for="transcriptInput">检查或粘贴带时间段的英文原文</label>
+          <textarea id="transcriptInput" rows="9" spellcheck="false" placeholder="00:00.000 --> 00:05.200 | Bank of America announced a new initiative. | 美国银行宣布了一项新计划。&#10;00:05.200 --> 00:10.800 | The program will support energy infrastructure. | 该计划将支持能源基础设施。"></textarea>
+          <p class="format-help">每行格式：开始时间 → 结束时间 | 英文 | 中文（中文可省略）。也支持标准 SRT 字幕。</p>
+          <div class="transcript-actions">
+            <button class="save-transcript-button" id="saveTranscriptBtn" type="button" disabled>保存此时间稿</button>
+            <span>保存后，再次选择同一音频即可直接导入。</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="import-summary" id="importSummary" aria-live="polite">选择音频并粘贴原文后即可生成。</div>
+      <div class="dialog-actions">
+        <button class="tool-button" value="cancel">取消</button>
+        <button class="primary" id="generateBtn" type="button">生成听写题</button>
+      </div>
+    </form>
+  </dialog>
+
+  <audio id="sourceAudio" preload="metadata"></audio>
+  <script src="app.js"></script>
+</body>
+</html>

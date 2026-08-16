@@ -1,0 +1,5 @@
+.venv/
+.models/
+.runtime/
+__pycache__/
+MP3/
