@@ -3,9 +3,6 @@ const lessons = [
   { zh: "我每天早上练习英语听力。", en: "I practice English listening every morning" },
   { zh: "熟能生巧。", en: "practice makes perfect" },
   { zh: "我们将按照时间顺序来讲述这个故事，而荷马并没有这样做。", en: "We're going to proceed through the story chronologically, which Homer does not do" },
-
-  // 根据 Reuters 2026-08-12 报道改写的进阶听写句：
-  // https://www.reuters.com/legal/transactional/bank-america-launches-250-billion-initiative-us-tech-energy-infrastructure-2026-08-12/
   { zh: "美国银行推出了一项规模达二千五百亿美元的计划，旨在推动美国关键基础设施的新一轮投资。", en: "Bank of America has launched a two hundred and fifty billion dollar initiative designed to accelerate a new wave of investment in critical American infrastructure" },
   { zh: "该计划将重点支持人工智能数据中心、半导体制造以及日益紧迫的能源基础设施需求。", en: "The initiative will focus on artificial intelligence data centers semiconductor manufacturing and the increasingly urgent need for expanded energy infrastructure" },
   { zh: "该行表示，资金将通过贷款、投资、资本市场交易以及面向企业客户的顾问服务来调动。", en: "The bank said capital would be mobilized through lending investments capital markets transactions and advisory services provided to corporate clients" },
